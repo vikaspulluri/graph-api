@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Vikas P | Facebook Profile</title>
-	<link rel="stylesheet" type="text/css" href="">
+	<title>Facebook Profile</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
 	<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
 	<script type="text/javascript" src="js/dom-utilities.js"></script>
 	<script type="text/javascript" src="js/graph-api.js"></script>
@@ -11,23 +13,28 @@
 	<div class="page">
 		<div class="user-message" id="user-message"></div>
 		<div class="login-container">
+			<div class="content">Please enter your access token here. . .</div>
 			<input type="text" name="access-token" id="access-token">
 			<input type="button" id="submit" value="submit">
 		</div>
+		<img id="loading-icon">
 		<div class="fb-container">
 			<section class="profile-info">
-				<h3>Welcome <span id="first-name"></span></h3>
-				Name : <span id="user-name"></span>
-				Hometown : <span id="hometown"></span>
-				Gender : <span id="gender"></span>
-				Email : <span id="email"></span>
-				Birthday : <span id="birthday"></span>
-				Favorite teams : <span id="fav-team"></span>
-				Favorite athlets : <span id="fav-athlete"> </span>
+				<h3>Welcome <span id="first-name" class="dynamic"></span></h3>
+				Name : <span id="user-name" class="dynamic"></span>
+				Hometown : <span id="hometown" class="dynamic"></span>
+				Gender : <span id="gender" class="dynamic"></span>
+				Email : <span id="email" class="dynamic"></span>
+				Birthday : <span id="birthday" class="dynamic"></span>
+				Favorite teams : <span id="fav-team" class="dynamic"></span>
+				Favorite athlets : <span id="fav-athlete" class="dynamic"> </span>
+				Likes : <span id="likes" class="dynamic"> </span>
 			</section>
 			<section id="profile-photos" class="profile-photos">
 			</section>
-			<section class="feed"></section>
+			<section class="feed" id="feed">
+				
+			</section>
 		</div>
 	</div>
 </body>

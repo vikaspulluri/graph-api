@@ -11,6 +11,14 @@ host_url = "https://graph.facebook.com";
 */
 $(document).ready(function(){
 	$('.fb-container').hide();
+	$('.feed').on('click','div.feed-next',function(){
+		url = $('.feed-next').attr('data').split('&');
+		filters = '&';
+		for(var i=1;i<url.length;i++){
+			filters += url[i]; 
+		}
+		getUserFeed(filters);
+	});
 	$('#submit').on('click',function(){
 		access_token = $('#access-token').val();
 		/*  This section will execute only after isAccessTokenValid() is completed. 
@@ -35,13 +43,16 @@ $(document).ready(function(){
 var isAccessTokenValid = function(){
 	var getRequest = $.ajax({
 		url : buildHostUrl('me','id'),
-		type : 'GET'
+		type : 'GET',
+		beforeSend : function(){
+			$('#loading-icon').attr('src','images/spinner.svg');
+		}
 	});
 	getRequest.fail(function(getResult, getStatus, errorThrown){
 		handleAppFailure(getResult);
 	});
 	getRequest.always(function(){
-
+		$('#loading-icon').removeAttr('src');
 	});
 	return getRequest;
 }
@@ -54,7 +65,7 @@ var isAccessTokenValid = function(){
 */
 function getUserBasicProfile(){
 	var getRequest = $.ajax({
-		url : buildHostUrl('me','name,birthday,email,about,first_name,gender,hometown,favorite_teams,favorite_athletes'),
+		url : buildHostUrl('me','name,birthday,likes.limit(7),email,about,first_name,gender,hometown,favorite_teams,favorite_athletes'),
 		type : 'GET'
 	});
 	getRequest.done(function(response){
@@ -66,6 +77,7 @@ function getUserBasicProfile(){
 		basicInfo.hometown = handleObject(response.hometown);
 		basicInfo.birthday = response.hasOwnProperty('birthday') ? response.birthday : null;
 		basicInfo.favorite_athletes = handleObject(response.favorite_athletes);
+		basicInfo.likes = handleObject(response.likes.data);
 		basicInfo.favorite_teams = handleObject(response.favorite_teams);
 		displayBasicInfo(basicInfo);
 	});
@@ -102,29 +114,59 @@ function getUserPictures(){
 	@HTTP method - GET
 	@return - Object that holds feed details 
 */
-function getUserFeed(){
+function getUserFeed(filters){
 	var getRequest = $.ajax({
-		url : buildHostUrl('me','feed'),
-		type : 'GET'
+		url : buildHostUrl('me','feed',filters),
+		type : 'GET',
+		beforeSend : function(){
+			$('#loading-icon').attr('src','images/spinner.svg');
+		}
 	});
 	getRequest.done(function(response){
-		console.log(response);
+		var feed = new Object();
+		if(response.hasOwnProperty('feed') && response.feed.hasOwnProperty('data')){
+			feed.data = new Array();
+			for(var node=0;node<response.feed.data.length;node++){
+				if(response.feed.data[node].hasOwnProperty('story')){
+					var tmpArr = new Array();
+					tmpArr['story'] = response.feed.data[node].story;
+					tmpArr['created_date'] = formatDate(response.feed.data[node].created_time);
+					tmpArr['message'] = response.feed.data[node].hasOwnProperty('message') ? response.feed.data[node].message : '';
+					feed.data.push(tmpArr);
+				}
+			}
+			if(response.feed.hasOwnProperty('paging')){
+				feed.previous = response.feed.paging.hasOwnProperty('previous') ? response.feed.paging.previous : '';
+				feed.next = response.feed.paging.hasOwnProperty('next') ? response.feed.paging.next : '';
+			}
+			return displayFeedInfo(feed);
+		}else{
+			displayUserMessage('Something went wrong while retrieving feed data','error');
+		}
 	});
 	getRequest.fail(function(getResult, getStatus){
 		handleAppFailure(getResult);
 	});
 	getRequest.always(function(){
-
+		$('#loading-icon').removeAttr('src');
 	});
 }
 
+function formatDate(str){
+	date = new Date(str);
+	return date.toLocaleDateString();
+}
 /*	Function that constructs API host url
 	@params	-	query nodes and fields that has to be fetched
 	@return	-	string formatted url
 
 */
-function buildHostUrl(nodes,fields){
-	return host_url + "/" + nodes + "?fields=" + fields + "&access_token=" + access_token;
+function buildHostUrl(nodes,fields,filters){
+	if(typeof(filters) == 'undefined'){
+		return host_url + "/" + nodes + "?fields=" + fields + "&access_token=" + access_token;	
+	}else{
+		return host_url + "/" + nodes + "?fields=" + fields + "&access_token=" + access_token + "" + filters;
+	}
 }
 
 /*	Function that formats the data. Will format only name fields
