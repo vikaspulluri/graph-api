@@ -29,12 +29,12 @@ input[type="text"] {
     outline:none;
 }
 input[type=text]:focus {
-    border: 3px solid #4080ff;
+    border: 3px solid #4267b2;
 }
 input[type="button"] {
     display: inline-block;
     width: 15vw;
-    background-color: #4080ff;
+    background-color: #4267b2;
     border: none;
     color: white;
     padding: 16px 32px;
@@ -63,4 +63,20 @@ input[type="button"] {
 }
 img#loading-icon {
     display: inline;
+}
+div#next, .button {
+    cursor: pointer;
+    border: 1px solid transparent;
+    display: inline-block;
+    padding: 5px;
+    background-color: #4267b2;
+    color: black;
+}
+div[class^="feed-"]{
+    border:1px solid black;
+    padding:10px 5px;
+    margin-bottom:10px;
+}
+.fb-container{
+	display: none;
 }

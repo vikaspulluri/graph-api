@@ -1,3 +1,8 @@
+/*	@Author : Vikas Pulluri <vikasiiitn@gmail.com>
+	@Date : Oct 16 2017
+	@File : JS file includes all the API call functions and utility functions that handle data 
+*/
+
 /*  Declaration of global variables
 	@variables - 
 		- host_url = url of facebook graph api domain
@@ -10,15 +15,6 @@ host_url = "https://graph.facebook.com";
 /*	Function to perform operations after the DOM is fully prepared
 */
 $(document).ready(function(){
-	$('.fb-container').hide();
-	$('.feed').on('click','div.feed-next',function(){
-		url = $('.feed-next').attr('data').split('&');
-		filters = '&';
-		for(var i=1;i<url.length;i++){
-			filters += url[i]; 
-		}
-		getUserFeed(filters);
-	});
 	$('#submit').on('click',function(){
 		access_token = $('#access-token').val();
 		/*  This section will execute only after isAccessTokenValid() is completed. 
@@ -26,12 +22,18 @@ $(document).ready(function(){
 		*/
 		$.when(isAccessTokenValid()).done(function(resp){
 			if(resp.id){
-				successOperations();
+				initializeFb();
 			}else{
 				handleAppFailure(resp);
 				return false;
 			}
 		});
+	});
+	/*	* Adding an event function to Get user feed button
+		
+	*/
+	$('#user-feed-link').on('click',function(){
+		getUserFeed();
 	});
 });
 
@@ -109,10 +111,12 @@ function getUserPictures(){
 
 	});	
 }
-/*	Function that makes api call to get the feed data of user
-	@params - 
+
+/*	Function that makes api call to get the feed data of user. It doesn't include any images
+	@params - {string} filters - this is @param is needed to get the next page feed data where the structure of API url is little different
+			- To get paginated data, along with access_token, we need to add some more query params. This filters will handle that  
 	@HTTP method - GET
-	@return - Object that holds feed details 
+	@return - {Object} - that holds feed details 
 */
 function getUserFeed(filters){
 	var getRequest = $.ajax({
@@ -123,24 +127,13 @@ function getUserFeed(filters){
 		}
 	});
 	getRequest.done(function(response){
-		var feed = new Object();
+		$('#user-feed-link').css('display','none');
 		if(response.hasOwnProperty('feed') && response.feed.hasOwnProperty('data')){
-			feed.data = new Array();
-			for(var node=0;node<response.feed.data.length;node++){
-				if(response.feed.data[node].hasOwnProperty('story')){
-					var tmpArr = new Array();
-					tmpArr['story'] = response.feed.data[node].story;
-					tmpArr['created_date'] = formatDate(response.feed.data[node].created_time);
-					tmpArr['message'] = response.feed.data[node].hasOwnProperty('message') ? response.feed.data[node].message : '';
-					feed.data.push(tmpArr);
-				}
-			}
-			if(response.feed.hasOwnProperty('paging')){
-				feed.previous = response.feed.paging.hasOwnProperty('previous') ? response.feed.paging.previous : '';
-				feed.next = response.feed.paging.hasOwnProperty('next') ? response.feed.paging.next : '';
-			}
-			return displayFeedInfo(feed);
-		}else{
+			buildFeedData(response.feed);
+		}else if(response.hasOwnProperty('data')){
+			buildFeedData(response);
+		}
+		else{
 			displayUserMessage('Something went wrong while retrieving feed data','error');
 		}
 	});
@@ -151,27 +144,78 @@ function getUserFeed(filters){
 		$('#loading-icon').removeAttr('src');
 	});
 }
+/*	Function to get the images of feed data along with the likes of the post by using post_id
+	@param - {string} post_id
+	@return - {first class function} displayFeedPhotos(post_details)
+*/
+function getFeedPostDetails(post_id){
+	var getRequest = $.ajax({
+		url : buildHostUrl(post_id,'attachments,likes.limit(1).summary(true)'),
+		type : 'GET',
+	});
+	getRequest.done(function(response){
+		var post_details = new Object();
+		if(response.hasOwnProperty('attachments')){
+			post_details.data = new Array();
+			for(var i=0;i<response.attachments.data.length;i++){
+				var tmpArr = new Object();
+				if(response.attachments.data[i].hasOwnProperty('media') && response.attachments.data[i].media.hasOwnProperty('image')){
+					tmpArr.image_url = response.attachments.data[i].media.image.src;
+				}else{
+					tmpArr.image_url = null;
+				}
+				tmpArr.type = response.attachments.data[i].type;
+				post_details.data.push(tmpArr);
+			} 
+		}
+		post_details.id = response.id;
+		if(response.hasOwnProperty('likes')){
+			post_details.like_count = response.likes.summary.total_count;
+		}
+		return displayFeedPhotos(post_details);
+	});
+	getRequest.fail(function(getResult, getStatus){
+		handleAppFailure(getResult);
+	});
+	getRequest.always(function(){
 
+	});	
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//	Utility functions will goes here 
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*	Function that converts the date in UTC format to locale format string
+	@params - {string} str
+	@return - {string}
+	
+*/
 function formatDate(str){
 	date = new Date(str);
 	return date.toLocaleDateString();
 }
+
 /*	Function that constructs API host url
-	@params	-	query nodes and fields that has to be fetched
-	@return	-	string formatted url
+	@params	-	{string} nodes
+	@params -	{string} fields
+	@params -	{string} filters
+	@return	-	{string} url
 
 */
 function buildHostUrl(nodes,fields,filters){
 	if(typeof(filters) == 'undefined'){
 		return host_url + "/" + nodes + "?fields=" + fields + "&access_token=" + access_token;	
 	}else{
-		return host_url + "/" + nodes + "?fields=" + fields + "&access_token=" + access_token + "" + filters;
+		return url;
 	}
 }
 
 /*	Function that formats the data. Will format only name fields
-	@param 	-	Either object or array which has to be formatted further
-	@return -	array of formatted data
+	@param 	-	{object/array} Either object or array which has to be formatted further
+	@return -	{array} array of formatted data
 	
 */
 function handleObject(arg){
@@ -205,7 +249,7 @@ function isObject(arg){
 }
 
 /*	Function that handles all API call failures
-	@param 	-	object of jQuery XMLHTTPRequest
+	@param 	-	{object} arg - object of jQuery XMLHTTPRequest
 	@return	-	will not return anything. will parse the object and handover it to "displayUserMessage()" 
 */
 function handleAppFailure(arg){
@@ -217,14 +261,42 @@ function handleAppFailure(arg){
 	}
 }
 /*	Function that controls the display of error messages
-	@param 	-	string (error message)
-	@param 	-	string (error/success)
+	@param 	-	{string} msg - (error message)
+	@param 	-	{string} type - (error/success)
 */
 function displayUserMessage(msg,type){
 	$('#user-message').text(msg);
 	if(type == 'error' || typeof(type) == 'undefined'){
 		$('#user-message').addClass('error');
 	}else{
+		if($('#user-message').hasClass('error')){
+			$('#user-message').removeClass('error');
+		}
 		$('#user-message').addClass('success');
 	}
+}
+/*	Function that formats the data returned by getUserFeed() function.
+	@param - {object} arg
+	@return - {first class function} displayFeedInfo(feed)
+*/
+function buildFeedData(arg){
+	var feed = new Object();
+	feed.data = new Array();
+	if(arg.hasOwnProperty('data')){
+		for(var node=0;node<arg.data.length;node++){
+			if(arg.data[node].hasOwnProperty('story')){
+				var tmpArr = new Array();
+				tmpArr['story'] = arg.data[node].story;
+				tmpArr['created_date'] = formatDate(arg.data[node].created_time);
+				tmpArr['message'] = arg.data[node].hasOwnProperty('message') ? arg.data[node].message : '';
+				tmpArr['id'] = arg.data[node].hasOwnProperty('id') ? arg.data[node].id : '';
+				feed.data.push(tmpArr);
+			}
+		}
+		if(arg.hasOwnProperty('paging')){
+			feed.previous = arg.paging.hasOwnProperty('previous') ? arg.paging.previous : '';
+			feed.next = arg.paging.hasOwnProperty('next') ? arg.paging.next : '';
+		}
+	}
+	return displayFeedInfo(feed);	
 }
