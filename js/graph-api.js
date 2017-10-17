@@ -91,6 +91,7 @@ function getUserBasicProfile(){
 	});
 }
 
+
 /*	Function that makes api call to get photo albums info
 	@params - 
 	@HTTP method - GET
@@ -98,11 +99,21 @@ function getUserBasicProfile(){
 */
 function getUserPictures(){
 	var getRequest = $.ajax({
-		url : buildHostUrl('me','albums.limit(5){name, photos.limit(2){name, picture, tags.limit(2)}},posts.limit(5)'),
+		url : buildHostUrl('me','albums.limit(5){name, photos.limit(1){name, picture}}'),
 		type : 'GET'
 	});
 	getRequest.done(function(response){
-		console.log(response);
+		var photos = new Array();
+		if(response.hasOwnProperty('albums') && response.albums.hasOwnProperty('data')){
+			for(var i=0;i<response.albums.data.length;i++){
+				if(response.albums.data[i].hasOwnProperty('photos')){
+					for(var j in response.albums.data[i].photos.data){
+						photos.push(response.albums.data[i].photos.data[j].picture);
+					}
+				}
+			}
+		}
+		displayUserPictures(photos);
 	});
 	getRequest.fail(function(getResult, getStatus){
 		handleAppFailure(getResult);
@@ -128,6 +139,7 @@ function getUserFeed(filters){
 	});
 	getRequest.done(function(response){
 		$('#user-feed-link').css('display','none');
+		$('.profile-info').fadeOut(2000);
 		if(response.hasOwnProperty('feed') && response.feed.hasOwnProperty('data')){
 			buildFeedData(response.feed);
 		}else if(response.hasOwnProperty('data')){
@@ -171,6 +183,7 @@ function getFeedPostDetails(post_id){
 		post_details.id = response.id;
 		if(response.hasOwnProperty('likes')){
 			post_details.like_count = response.likes.summary.total_count;
+			post_details.has_liked = (response.likes.summary.has_liked == 'true');
 		}
 		return displayFeedPhotos(post_details);
 	});
@@ -209,7 +222,7 @@ function buildHostUrl(nodes,fields,filters){
 	if(typeof(filters) == 'undefined'){
 		return host_url + "/" + nodes + "?fields=" + fields + "&access_token=" + access_token;	
 	}else{
-		return url;
+		return filters;
 	}
 }
 

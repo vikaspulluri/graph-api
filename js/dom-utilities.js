@@ -15,11 +15,11 @@
 */
 function addToDiv(arr,id){
 	if(arr == null){
-		$('#' + id).text('null');
+		$('#' + id).text('');
 		return;
 	}
 	for(var i=0;i<arr.length;i++){
-		$('#' + id).append(arr[i] + ' ');
+		$('#' + id).append(arr[i] + ', ');
 	}
 }
 /*	Function to inject the basic info of the user into HTML DOM
@@ -66,6 +66,7 @@ function initializeFb(){
 	$('.fb-container').attr('style','display:block !important');
 	displayUserMessage("Access token is valid", "success")
 	getUserBasicProfile();
+	getUserPictures();
 	$('.fb-container').show();
 	$('.success').fadeOut(4000);
 }
@@ -98,21 +99,28 @@ getFeedPhotos = function(){
 
 */
 displayFeedPhotos = function(feed){
-	var itemDisplay = $('<div/>').addClass('likes').text(feed.like_count);
-	if(feed.hasOwnProperty('data') && feed.data[0].hasOwnProperty('image_url')){
-		itemDisplay.append($('<img/>').addClass('image').attr('src',feed.data[0].image_url));
-	}
 	var postId = '#' + feed.id;
+	var like_class = feed.has_liked ? 'liked' : ''; 
+	var likesDisplay = $('<div/>').addClass('likes '+like_class).append("<span>"+feed.like_count+"</span>");
+	if(feed.hasOwnProperty('data') && feed.data[0].hasOwnProperty('image_url')){
+		var imageDisplay = $('<img/>').addClass('image').attr('src',feed.data[0].image_url);
+		if($(postId).find('.likes').length == 0){
+			$(postId).append(imageDisplay);
+		}
+	}
 	if($(postId).find('.likes').length == 0)
-		$(postId).append(itemDisplay);
+		$(postId).append(likesDisplay);
 }
 
+function displayUserPictures(photos){
+	$('#user-photos').append('<div class="picture"><img src="'+photos[0]+'"></div>');
+}
 /*	Function to get more feed data while user scrolled down to bottom 
 
 */
-$(window).scroll(function() {
-   if($(window).scrollTop() + $(window).height() == $(document).height()) {
-        filters = $('div.next').attr('data');
-		getUserFeed(filters);
-   }
-});
+// $(window).scroll(function() {
+//    if($(window).scrollTop() + $(window).height() == $(document).height()) {
+//         filters = $('div.next').attr('data');
+// 		getUserFeed(filters);
+//    }
+// });

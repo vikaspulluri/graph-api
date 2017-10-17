@@ -3,7 +3,7 @@
 /*Using open sans font for the entire page. Imported the font from google fonts*/
 @import url('https://fonts.googleapis.com/css?family=Lobster|Nosifer|Open+Sans');
 
-body{font-family: 'Open Sans', sans-serif;font-size: 16px;font-weight: 300;color: #555;margin: 0 auto;padding: 0;max-width: 1920px; background-color: honeydew;}
+body{font-family: 'Open Sans', sans-serif;font-size: 16px;font-weight: 300;color: #555;margin: 0 auto;padding: 0;max-width: 1920px;background-color: #e9ebee;}
 header{margin: 0;padding: 0;width: 100%;position: relative;}
 
 /* Text */
@@ -12,7 +12,7 @@ h2 {font-size: 2em;text-align: left;font-family: -webkit-pictograph;color: navy;
 h6 {margin: 0.5em 0 0.8em 0;font-size: 1.1em;font-style: italic;font-family: sans-serif;}
 a {color: indigo;text-decoration: none;}
 
-.dynamic{font-family: 'Nosifer', cursive;}
+.dynamic{font-family: serif;text-transform: uppercase;font-weight: bold;color:#4267b2;}
 .login-container {
     width:100%;
 }
@@ -68,15 +68,100 @@ div#next, .button {
     cursor: pointer;
     border: 1px solid transparent;
     display: inline-block;
-    padding: 5px;
+    padding: 10px;
     background-color: #4267b2;
-    color: black;
+    color: #fff;
+    font-weight: bold;
+    margin-left: 45%;
+    margin-top: 5px;
 }
 div[class^="feed-"]{
     border:1px solid black;
-    padding:10px 5px;
+    padding: 2vw 5px;
     margin-bottom:10px;
 }
 .fb-container{
 	display: none;
+}
+
+
+.feed {
+    position: relative;
+    width: 80%;
+    margin-left: 10%;
+    padding: 5px;
+}
+
+.story {
+    margin: 0 auto;
+    float: left;
+    font-weight: bold;
+    padding: 0 2vw;
+    color: #4267b2;
+}
+
+.posted-time {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.likes {
+    background-image: url('../images/like.svg');
+    background-repeat: no-repeat;
+    background-size: 50px 40px;
+    padding: 0.5vw;
+    display: flex;
+    margin-left: 1.4vw;
+}
+.likes span {
+    display: block;
+    margin-left: 3vw;
+    font-size: 1.4em;
+}
+
+.message {
+    display: flex;
+    justify-content: initial;
+    margin-top: 5px;
+    font-size: 1.3vw;
+    margin-left: 6px;
+}
+
+img.image {
+    max-width: 40vw;
+    display: flex;
+    margin-left: 27%;
+}
+.picture {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 15px;
+}
+
+.picture img {
+    width: 128px;
+    height: 128px;
+    -webkit-border-radius: 64px;
+    -moz-border-radius: 64px;
+    border-radius: 64px;
+    background: url('../images/default-profile-photo.png');
+    background-repeat: no-repeat;
+}
+.fb-container h3{
+	    position: absolute;
+	    top: 30px;
+	    width: 100%;
+	    margin: 0 auto;
+	    text-align: center;
+	    font-size: 1.5em;
+}
+.profile-info div {display: flow-root;padding: 6px;text-align: left;margin-left: 2vw;font-weight: 600;}
+
+section.feed > div:nth-of-type(odd) {
+    background: #fff;
+}
+section.feed > div:nth-of-type(even) {
+    background: #fff;
 }
