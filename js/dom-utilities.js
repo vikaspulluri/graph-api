@@ -26,7 +26,7 @@ function addToDiv(arr,id){
 	@param - {object} data
 */
 function displayBasicInfo(data){
-	$('#first-name').text(data.first_name);
+	//$('#first-name').text(data.first_name);
 	$('#hometown').text(data.hometown);
 	$('#gender').text(data.gender);
 	$('#email').text(data.email);
@@ -115,12 +115,19 @@ displayFeedPhotos = function(feed){
 function displayUserPictures(photos){
 	$('#user-photos').append('<div class="picture"><img src="'+photos[0]+'"></div>');
 }
-/*	Function to get more feed data while user scrolled down to bottom 
+/*	Function to get more feed data while user scrolled down to bottom and display back to top button when user scrolls down from top
 
 */
-// $(window).scroll(function() {
-//    if($(window).scrollTop() + $(window).height() == $(document).height()) {
-//         filters = $('div.next').attr('data');
-// 		getUserFeed(filters);
-//    }
-// });
+$(window).scroll(function() {
+
+   if($(window).scrollTop() + $(window).height() == $(document).height()) {
+        filters = $('div.next').attr('data');
+		getUserFeed(filters);
+   }
+
+   if (document.body.scrollTop > 70 || document.documentElement.scrollTop > 70) {
+        $("#back-to-top").css('display', "block");
+    } else {
+        $("#back-to-top").css('display', "none");
+    }
+});

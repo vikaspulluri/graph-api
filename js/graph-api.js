@@ -1,12 +1,10 @@
-/*	@Author : Vikas Pulluri <vikasiiitn@gmail.com>
-	@Date : Oct 16 2017
-	@File : JS file includes all the API call functions and utility functions that handle data 
+/*@Author : Vikas Pulluri <vikasiiitn@gmail.com>
+  @Date : Oct 16 2017
+  @File : JS file includes all the API call functions and utility functions that handle data 
 */
 
 /*  Declaration of global variables
-	@variables - 
-		- host_url = url of facebook graph api domain
-		- access_token = default access token with limited permissions
+	- access_token = default access token with limited permissions
 */
 host_url = "https://graph.facebook.com";
 //access_token = "EAACEdEose0cBAPm6CNaxEyBxGZBWa9582YKv2CE4soWwxCqkobZBi1e7ZCs0JkEiU6fAUeumSRIpzTWHbJtZBEIWplGL4Rc8v3PvoKMGMZCDy76xl8QssWmZB3ZBUoUbaPOW2pAjR0JNZCyRYxeht75hmmI1yv4gMw5mpAT74gTOZA2KVmWZBNA800JVdJXCgkz6vens1AHXdnHwZDZD";
@@ -29,11 +27,16 @@ $(document).ready(function(){
 			}
 		});
 	});
-	/*	* Adding an event function to Get user feed button
-		
+	/*Adding an event function to Get user feed button	
 	*/
 	$('#user-feed-link').on('click',function(){
 		getUserFeed();
+	});
+
+	//Function to move the document to top when user clicks on back to top button
+	$('#back-to-top').on('click',function(){
+		document.body.scrollTop = 0; // For Chrome, Safari and Opera 
+    	document.documentElement.scrollTop = 0; // For IE and Firefox
 	});
 });
 
@@ -139,7 +142,6 @@ function getUserFeed(filters){
 	});
 	getRequest.done(function(response){
 		$('#user-feed-link').css('display','none');
-		$('.profile-info').fadeOut(2000);
 		if(response.hasOwnProperty('feed') && response.feed.hasOwnProperty('data')){
 			buildFeedData(response.feed);
 		}else if(response.hasOwnProperty('data')){

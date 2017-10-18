@@ -3,6 +3,8 @@
 <head>
 	<title>Facebook Profile</title>
 	<meta charset="utf-8">
+	<meta name="keywords" content="vikas graph api, vikas pulluri, graph api">
+	<meta name="description" content="A simple web application which uses graph api to fetch the facebook data and display it in simple and elegant way">
 	<meta name="viewport" content="width=device-width">
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
 	<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
@@ -14,22 +16,22 @@
 		<div class="user-message" id="user-message"></div>
 		<div class="login-container">
 			<div class="content">Please enter your access token here. . .</div>
-			<input type="text" name="access-token" id="access-token">
-			<input type="button" id="submit" value="submit">
+			<input type="text" name="access-token" id="access-token" placeholder="Enter your access token">
+			<input type="button" id="submit" value="Submit">
+			<div class="helper">Don't know your access token?<a href="https://developers.facebook.com/tools/explorer" target="_blank">see here<p class="tooltip">Checkout this link of facebook for developers and login there to get your token</p></a></div>
 		</div>
 		<img id="loading-icon">
 		<div class="fb-container">
-			<h3><span id="first-name" class="dynamic"></span></h3>
-			<section class="user-photos" id="user-photos"></section>
 			<section class="profile-info">
-				<div>Name : <span id="user-name" class="dynamic"></span></div>
-				<div>Hometown : <span id="hometown" class="dynamic"></span></div>
-				<div>Gender : <span id="gender" class="dynamic"></span></div>
-				<div>Email : <span id="email" class="dynamic"></span></div>
-				<div>Birthday : <span id="birthday" class="dynamic"></span></div>
-				<div>Favorite teams : <span id="fav-team" class="dynamic"></span></div>
-				<div>Favorite athlets : <span id="fav-athlete" class="dynamic"> </span></div>
-				<div>Likes : <span id="likes" class="dynamic"> </span>
+				<div class="user-photos" id="user-photos"></div>
+				<p>Name : <span id="user-name" class="dynamic"></span></p>
+				<p>Hometown : <span id="hometown" class="dynamic"></span></p>
+				<p>Gender : <span id="gender" class="dynamic"></span></p>
+				<p>Email : <span id="email" class="dynamic"></span></p>
+				<p>Birthday : <span id="birthday" class="dynamic"></span></p>
+				<p>Favorite teams : <span id="fav-team" class="dynamic"></span></p>
+				<p>Favorite athlets : <span id="fav-athlete" class="dynamic"> </span></p>
+				<p>Likes : <span id="likes" class="dynamic"> </span></p>
 			</section>
 			<div class="button" id="user-feed-link">Get your feed. . .</div>
 			<section class="feed" id="feed">
@@ -37,6 +39,7 @@
 			</section>
 			<section id="load-more"></section>
 		</div>
+		<div id="back-to-top"><img src="images/back-to-top.png"></div>
 	</div>
 </body>
 </html>
