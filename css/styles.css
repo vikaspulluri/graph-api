@@ -75,7 +75,6 @@ div#user-photos {position: relative;}
 
 	.likes span {margin-left: 45px;}
 	.button {margin-left: 30%;}
-	div#next{	display: none;}
 	.login-container .content {padding: 10px 2%;display: flex;justify-content: center;}
 	input#submit {width: 120px;display: flex;justify-content: center;text-align: center;margin: 0 auto;margin-top: 10px;}
 	input[type="text"] {width: 60vw;}

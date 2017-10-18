@@ -32,6 +32,11 @@ $(document).ready(function(){
 	$('#user-feed-link').on('click',function(){
 		getUserFeed();
 	});
+	//For mobile browsers, scroll event is not working. To load more feed data, we are displaying a load more button
+	$('#load-more').on('click',function(){
+		filters = $('div.next').attr('data');
+		getUserFeed(filters);
+	});
 
 	//Function to move the document to top when user clicks on back to top button
 	$('#back-to-top').on('click',function(){

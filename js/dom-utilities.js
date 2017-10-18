@@ -118,7 +118,7 @@ function displayUserPictures(photos){
 /*	Function to get more feed data while user scrolled down to bottom and display back to top button when user scrolls down from top
 
 */
-$(window).scroll(function() {
+function onScroll() {
 
    if($(window).scrollTop() + $(window).height() == $(document).height()) {
         filters = $('div.next').attr('data');
@@ -130,4 +130,4 @@ $(window).scroll(function() {
     } else {
         $("#back-to-top").css('display', "none");
     }
-});
+};
